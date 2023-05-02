@@ -32,6 +32,8 @@ class Ui_Dialog(object):
         self.label_2 = QtWidgets.QLabel(Dialog)
         self.label_2.setGeometry(QtCore.QRect(70, 110, 60, 16))
         self.label_2.setObjectName("label_2")
+        self.normalize = QtWidgets.QCheckBox("Keep weight and normalize to 1",Dialog)
+        self.normalize.setGeometry(QtCore.QRect(70, 180, 280, 16))
 
         self.retranslateUi(Dialog)
         self.buttonBox.accepted.connect(Dialog.accept)

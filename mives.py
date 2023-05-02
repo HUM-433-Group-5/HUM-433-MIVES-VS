@@ -22,7 +22,9 @@ import math
 
 class Ui_MainWindow(QMainWindow):
     def setupUi(self, MainWindow):
-
+        # For variants
+        self.variants = {}
+        
         # For the indicator function
         self.indicator_dictionnary = {}
 
@@ -39,7 +41,16 @@ class Ui_MainWindow(QMainWindow):
         MainWindow.resize(1015, 776)
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
-
+            
+        self.label0 = QtWidgets.QLabel(self.centralwidget)
+        self.label0.setGeometry(QtCore.QRect(0, 0, self.image_width, 731))
+        self.label0.setText("")
+        self.label0.setAutoFillBackground(True)
+        palette = self.label0.palette()
+        palette.setColor(QPalette.Window, QColor(Qt.white))
+        self.label0.setPalette(palette)
+        self.label0.setScaledContents(True)
+        self.label0.setObjectName("label_base")
 
         self.label = QtWidgets.QLabel(self.centralwidget)
         self.label.setGeometry(QtCore.QRect(0, 0, self.image_width, 731))
@@ -47,12 +58,10 @@ class Ui_MainWindow(QMainWindow):
         self.label.setPixmap(QtGui.QPixmap("node_style.png"))
         self.label.setScaledContents(True)
         self.label.setObjectName("label")
-
-
+            
         self.buttony = 0
         self.children_buttons = []
         
-
         clear_button = QtWidgets.QPushButton(self.centralwidget)
         clear_button.setGeometry(QtCore.QRect(810, self.buttony, 200, 30))
         self.buttony = self.buttony + 30
@@ -65,9 +74,15 @@ class Ui_MainWindow(QMainWindow):
         rem_button.setGeometry(QtCore.QRect(810, self.buttony, 200, 30))
         self.buttony = self.buttony + 30
         rem_button.setObjectName("Remove")
-        rem_button.setText("Remove leaves")
+        rem_button.setText("Remove branch")
         rem_button.clicked.connect(self.remove_popup)
 
+        edit_button = QtWidgets.QPushButton(self.centralwidget)
+        edit_button.setGeometry(QtCore.QRect(810, self.buttony, 200, 30))
+        self.buttony = self.buttony + 30
+        edit_button.setObjectName("Edit branch")
+        edit_button.setText("Edit branch")
+        edit_button.clicked.connect(self.edit_popup)
 
         pil_button = QtWidgets.QPushButton(self.centralwidget)
         pil_button.setGeometry(QtCore.QRect(810, self.buttony, 200, 30))
@@ -93,12 +108,6 @@ class Ui_MainWindow(QMainWindow):
         ind_button.clicked.connect(self.weight_selection_popup_ind)
 
 
-        edit_button = QtWidgets.QPushButton(self.centralwidget)
-        edit_button.setGeometry(QtCore.QRect(810, self.buttony, 200, 30))
-        self.buttony = self.buttony + 30
-        edit_button.setObjectName("Edit branch")
-        edit_button.setText("Edit branch")
-        edit_button.clicked.connect(self.edit_popup)
         
 # Start for Database
         self.buttony = self.buttony + 30
@@ -146,7 +155,8 @@ class Ui_MainWindow(QMainWindow):
         self.numClicked = 0
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
-
+        
+        self.update_tree_display()
 
     def weight_selection_popup_crit(self):
         list = []
@@ -165,6 +175,12 @@ class Ui_MainWindow(QMainWindow):
                 if(self.check_user_input(ui.branch_name.text(),ui.weight.text())):
                     self.weights[ui.branch_name.text()] = ui.weight.text()
                     self.add_child_crit(ui.branch_name.text(), ui.weight.text(), item)
+                    
+                    if(ui.normalize.isChecked()):
+                        self.find_peers_pil(ui.branch_name.text(),1-float(ui.weight.text()))
+                        
+                    if self.check_weights(self.t)==False:
+                        QMessageBox.about(self, "Weights", "Weights don't sum up to 1 when adding a criterion")
                 else:
                     QMessageBox.about(self, "Error", "Can't have two branches with the same name and weights must be a number between 0 and 1")
             else:
@@ -181,8 +197,13 @@ class Ui_MainWindow(QMainWindow):
             rsp = Dialog.exec_()
             if rsp == QtWidgets.QDialog.Accepted:
                 if(self.check_user_input(ui.branch_name.text(),ui.weight.text())):
+                    if(ui.normalize.isChecked()):
+                        self.find_peers_pil(ui.branch_name.text(),1-float(ui.weight.text()))
                     self.weights[ui.branch_name.text()] = ui.weight.text()
                     self.add_child_pil(ui.branch_name.text(), ui.weight.text())
+                    
+                    if self.check_weights(self.t)==False:
+                        QMessageBox.about(self, "Weights", "Weights don't sum up to 1 when adding a pillar")
                 else:
                     QMessageBox.about(self, "Error", "Can't have two branches with the same name and weights must be a number between 0 and 1")
             else:
@@ -220,6 +241,8 @@ class Ui_MainWindow(QMainWindow):
                 if(self.check_user_input(ui.branch_name.text(),ui.weight.text())):
                     self.weights[ui.branch_name.text()] = ui.weight.text()
                     self.add_child_ind(ui.branch_name.text(), ui.weight.text(), crit)
+                    if(ui.normalize.isChecked()):
+                        self.find_peers_pil(ui.branch_name.text(),1-float(ui.weight.text()))
                     Dialog_2 = QtWidgets.QDialog()
                     indicator_updated_dialog = indicator_updated()
                     indicator_updated_dialog.setupUi(Dialog_2)
@@ -244,6 +267,8 @@ class Ui_MainWindow(QMainWindow):
                         # Hence we need to be careful not to have 2 indicators with the same name
                         self.indicator_dictionnary[name_of_indicator] = {"weight":self.weights[name_of_indicator],"x_min":x_min,"x_max":x_max,"geometric_P":geometric_P,
                         "geometric_K":geometric_K,"geometric_C":geometric_C,"binary":binary,"descending":descending, "unit": unit}
+                        if self.check_weights(self.t)==False:
+                            QMessageBox.about(self, "Weights", "Weights don't sum up to 1 when adding a indicator")
                     else:
                         pass
                 else:
@@ -253,6 +278,20 @@ class Ui_MainWindow(QMainWindow):
         else:
             pass
     
+    def find_peers_pil(self, branch_name, factor = 1):
+        cost = None
+        for node in self.t.traverse("postorder"):
+            if node.name == branch_name:
+                cost = node.up
+        if cost == None:
+            for node in self.t.traverse("postorder"):
+                if node.up == None:
+                    cost = node
+        children = cost.get_children()
+        for ch in children:
+            if ch.name != branch_name:
+                self.edit_branch(ch.name, float(self.weights[ch.name]) * factor)
+        return children
     
     def add_child_pil(self, branch_name, weight):
         for node in self.t.traverse("postorder"):
@@ -321,10 +360,21 @@ class Ui_MainWindow(QMainWindow):
                 for leaf in self.t:
                     if leaf.name == item:
                         leaf.detach()
-                        self.update_tree_display()
+                        self.update_tree_display()  
+                        if self.check_weights(self.t)==False:
+                            QMessageBox.about(self, "Weights", "Weights don't sum up to 1")
             else :
                 pass
 
+    def edit_branch(self, item, new_weight):
+        for node in self.t.traverse("levelorder"):
+            if node.name == item:
+                node.write
+
+                self.weights[item] = new_weight
+                self.weight_faces[item].text = new_weight
+
+                self.update_tree_display()
 
     def edit_popup(self):
             list = []
@@ -396,6 +446,34 @@ class Ui_MainWindow(QMainWindow):
                                         # Hence we need to be careful not to have 2 indicators with the same name
                                         self.indicator_dictionnary[name_of_indicator] = {"weight":self.weights[name_of_indicator],"x_min":x_min,"x_max":x_max,"geometric_P":geometric_P,
                                         "geometric_K":geometric_K,"geometric_C":geometric_C,"binary":binary,"descending":descending, "unit": unit}
+                                        
+                                        for node in self.t.traverse("postorder"):
+                                            # Add text on top of tree nodes
+                                            if node.name == name_of_indicator:
+                                                name = node.name +' [' + unit + ']'
+                                                name_face = TextFace(name)
+                                                name_face.margin_left = 2
+                                                name_face.margin_right = 120-8*len(name)
+                                                self.name_faces[node.name] = name_face
+                                                
+                                                
+                                                weight_face = TextFace(str(self.weights[node.name]))
+                                                weight_face.margin_left = 2
+                                                weight_face.margin_right = 120-8*len(str(self.weights[node.name]))
+                                                
+                                                self.weight_faces[node.name] = weight_face
+                                                
+                                                new_node = Tree()
+                                                new_node.add_face(name_face, column=0, position="branch-top")
+                                                new_node.add_face(weight_face, column=0, position="branch-bottom")
+                                                new_node.img_style = self.style2
+                                                
+                                                parent = node.up
+                                                parent.remove_child(node)
+                                                parent.add_child(new_node)
+                                                
+                                                self.update_tree_display()
+                                                
                                     else:
                                         pass
 
@@ -441,10 +519,11 @@ class Ui_MainWindow(QMainWindow):
             #Open second window
             self.window=QtWidgets.QMainWindow()
             self.ui=Ui_ValuesWindow()      #------------->creating an object 
-            self.ui.setupUi(self.window, self.complete_dictionnary, self.indicator_dictionnary,self.t)
+            self.ui.setupUi(self, self.window, self.complete_dictionnary, self.indicator_dictionnary,self.t)
             self.window.show()
             self.close()
-
+            
+            print(self.variants)
         else:
             if self.check_weights(self.t)==False:
                 QMessageBox.about(self, "Weights", "Weights don't sum up to 1")
@@ -471,8 +550,23 @@ class Ui_MainWindow(QMainWindow):
 
 
     def update_tree_display(self):
-        self.t.render("node_style.png", w=self.image_width, tree_style=self.ts)
-        self.label.setPixmap(QtGui.QPixmap("node_style.png"))
+        self.t.render("node_style.png", w = 800, tree_style=self.ts)
+        label = self.label
+        pixmap = QtGui.QPixmap("node_style.png")
+        rw = 800 / pixmap.width()
+        rh = 731 / pixmap.height()
+        r = min(rw,rh)
+        new_pixmap = pixmap.scaled(int(pixmap.width()*r), int(pixmap.height()*r))
+        
+        h = new_pixmap.height() - 50
+        
+        if h < 30: 
+            h = 30
+        
+        cropped_pixmap = new_pixmap.copy(0, 0, new_pixmap.width(), h)
+        
+        self.label.setGeometry(QtCore.QRect(0, 400 - int(cropped_pixmap.height() * 0.5), cropped_pixmap.width(), cropped_pixmap.height()))
+        self.label.setPixmap(cropped_pixmap)
 
 # Start for Database
     def set_use_database(self):
@@ -586,12 +680,34 @@ class Ui_MainWindow(QMainWindow):
             if  node.is_leaf()== True:
                 self.indicator_dictionnary[node.name] = {"weight":self.weights[node.name],"x_min":1,"x_max":10,"geometric_P":1,
                     "geometric_K":0,"geometric_C":1,"binary":False,"descending":False, "unit": "-"}
-
+                if str("cost").lower() in str(node.up.name).lower():
+                    self.indicator_dictionnary[node.name]['unit'] = 'Euro'
+                elif str("time").lower() in str(node.up.name).lower():
+                    self.indicator_dictionnary[node.name]['unit'] = 'Hour'
+                    
+                if node.name == 'Co2-eq Emissions':
+                    self.indicator_dictionnary[node.name]['unit'] = 'Kg Co2-eq'
+                elif node.name == 'Energy Consumption':
+                    self.indicator_dictionnary[node.name]['unit'] = 'MJ'
+                elif node.name == 'Index of Efficiency':
+                    self.indicator_dictionnary[node.name]['unit'] = 'Index'
+                elif node.name == 'Index of risks':
+                    self.indicator_dictionnary[node.name]['unit'] = 'Index'
+                elif node.name == 'Social Benefits':
+                    self.indicator_dictionnary[node.name]['unit'] = 'Index'
+                elif node.name == 'Disturbances':
+                    self.indicator_dictionnary[node.name]['unit'] = 'Index'
+                    
         for node in t.traverse("postorder"):
             # Add text on top of tree nodes
-            name_face = TextFace(node.name)
+            if node.is_leaf()== True:
+                name = node.name +' [' +self.indicator_dictionnary[node.name]['unit'] + ']'
+                name_face = TextFace(name)
+                name_face.margin_right = 120-8*len(name)
+            else:
+                name_face = TextFace(node.name)
+                name_face.margin_right = 120-8*len(node.name)
             name_face.margin_left = 2
-            name_face.margin_right = 120-8*len(node.name)
             weight_face = TextFace(str(self.weights[node.name]))
             weight_face.margin_left = 2
             weight_face.margin_right = 120-8*len(str(self.weights[node.name]))

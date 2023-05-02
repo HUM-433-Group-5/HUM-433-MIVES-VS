@@ -19,8 +19,10 @@ import sys
 
 class Ui_ValuesWindow(object):
 
-    def setupUi(self, MainWindow, complete_dictionnary, indicator_dictionnary,t):
+    def setupUi(self, MainWindow_obj, MainWindow, complete_dictionnary, indicator_dictionnary,t):
         self.image_width = 800
+        self.MainWindow = MainWindow
+        self.MainWindow_obj = MainWindow_obj
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(1300, 776)
 
@@ -56,6 +58,8 @@ class Ui_ValuesWindow(object):
         self.name_indic = []
         self.minmax_dictionnary = {}
 
+        self.output_dict_formatted = {}
+        
         for node  in self.t.traverse("postorder"):
             if node.is_leaf():
                 # ROMAIN
@@ -146,7 +150,7 @@ class Ui_ValuesWindow(object):
         self.Previous.setIconSize(QtCore.QSize(56, 56))
         self.Previous.setCheckable(True)
         self.Previous.setObjectName("Previous")
-        self.Previous.clicked.connect(MainWindow.close)
+        self.Previous.clicked.connect(self.previous)
 
 
         MainWindow.setCentralWidget(self.centralwidget)
@@ -171,6 +175,15 @@ class Ui_ValuesWindow(object):
         self.Copy.setText(_translate("MainWindow", "Copy"))
         self.Redo.setText(_translate("MainWindow", "Redo"))
 
+    def previous(self):
+
+        for varient_name, value in self.output_dict_formatted.items():
+            for i, crit in enumerate (self.minmax_dictionnary.items()):
+                self.output_dict_formatted[varient_name][crit[0]]
+
+        self.MainWindow_obj.variants = self.output_dict_formatted
+        self.MainWindow.close()
+        
 
     def new_column(self):
 
