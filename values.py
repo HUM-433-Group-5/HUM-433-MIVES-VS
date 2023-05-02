@@ -16,8 +16,9 @@ from Table_output import Table
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 import sys
+from dialog import Ui_Dialog
 
-class Ui_ValuesWindow(object):
+class Ui_ValuesWindow(QMainWindow):
 
     def setupUi(self, MainWindow_obj, MainWindow, complete_dictionnary, indicator_dictionnary,t):
         self.image_width = 800
@@ -40,25 +41,19 @@ class Ui_ValuesWindow(object):
         self.complete_dictionnary = complete_dictionnary
         self.indicator_dictionnary = indicator_dictionnary
 
-        self.verticalLayoutWidget = QtWidgets.QWidget(self.centralwidget)
-        self.verticalLayoutWidget.setGeometry(QtCore.QRect(self.image_width + 120, 0, 111, 631))
-        self.verticalLayoutWidget.setObjectName("verticalLayoutWidget")
+        self.verticalLayoutWidget = {}
+        self.verticalLayout = {}
 
-        self.verticalLayout = QtWidgets.QVBoxLayout(self.verticalLayoutWidget)
-        self.verticalLayout.setContentsMargins(0, 0, 0, 0)
-        self.verticalLayout.setObjectName("verticalLayout")
-
-        self.doubleSpinBox = []
-        self.doubleSpinBox2 = []
-        self.doubleSpinBox3 = []
+        self.doubleSpinBox = [[] * 3]
         self.units = []
+        self.minmax = []
 
-        self.nb_column = 1
+        self.nb_column = 0
         self.nb_output = 0
         self.name_indic = []
         self.minmax_dictionnary = {}
 
-        self.output_dict_formatted = {}
+        self.variants = {}
         
         for node  in self.t.traverse("postorder"):
             if node.is_leaf():
@@ -68,45 +63,24 @@ class Ui_ValuesWindow(object):
                 else :
                     self.minmax_dictionnary[node.name] = (0,1, indicator_dictionnary[node.name]["unit"])
 
+        self.verticalLayoutWidget_units = QtWidgets.QWidget(self.centralwidget)
+        self.verticalLayoutWidget_units.setGeometry(QtCore.QRect(self.image_width + 20, 0, 111, 631))
+        self.verticalLayoutWidget_units.setObjectName("verticalLayoutWidget_units")
+
+        self.verticalLayout_units = QtWidgets.QVBoxLayout(self.verticalLayoutWidget_units)
+        self.verticalLayout_units.setContentsMargins(0, 0, 0, 0)
+        self.verticalLayout_units.setObjectName("verticalLayout_units")
 
         for i, (min, max, un) in self.minmax_dictionnary.items():
-            self.doubleSpinBox.append(QtWidgets.QDoubleSpinBox(self.verticalLayoutWidget))
-            self.doubleSpinBox[-1].setMinimum(float(min))
-            self.doubleSpinBox[-1].setMaximum(float(max))
-            self.doubleSpinBox[-1].setObjectName("doubleSpinBox_"+i)
-            self.verticalLayout.addWidget(self.doubleSpinBox[-1])
-        
-        self.nb_column = self.nb_column + 1
-
-        self.verticalLayoutWidget_2 = QtWidgets.QWidget(self.centralwidget)
-        self.verticalLayoutWidget_2.setGeometry(QtCore.QRect(self.image_width+ 240, 0, 111, 631))
-        self.verticalLayoutWidget_2.setObjectName("verticalLayoutWidget_2")
-
-        self.verticalLayout_2 = QtWidgets.QVBoxLayout(self.verticalLayoutWidget_2)
-        self.verticalLayout_2.setContentsMargins(0, 0, 0, 0)
-        self.verticalLayout_2.setObjectName("verticalLayout_2")
-
-        self.verticalLayoutWidget_3 = QtWidgets.QWidget(self.centralwidget)
-        self.verticalLayoutWidget_3.setGeometry(QtCore.QRect(self.image_width+ 360, 0, 111, 631))
-        self.verticalLayoutWidget_3.setObjectName("verticalLayoutWidget_3")
-
-        self.verticalLayout_3 = QtWidgets.QVBoxLayout(self.verticalLayoutWidget_3)
-        self.verticalLayout_3.setContentsMargins(0, 0, 0, 0)
-        self.verticalLayout_3.setObjectName("verticalLayout_3")
-
-        self.verticalLayoutWidget_4 = QtWidgets.QWidget(self.centralwidget)
-        self.verticalLayoutWidget_4.setGeometry(QtCore.QRect(self.image_width + 20, 0, 111, 631))
-        self.verticalLayoutWidget_4.setObjectName("verticalLayoutWidget_4")
-
-        self.verticalLayout_4 = QtWidgets.QVBoxLayout(self.verticalLayoutWidget_4)
-        self.verticalLayout_4.setContentsMargins(0, 0, 0, 0)
-        self.verticalLayout_4.setObjectName("verticalLayout_4")
-
-        for i, (min, max, un) in self.minmax_dictionnary.items():
-            self.units.append(QtWidgets.QLabel(self.verticalLayoutWidget_4))
+            self.units.append(QtWidgets.QLabel(self.verticalLayoutWidget_units))
             self.units[-1].setObjectName("units_"+i)
             self.units[-1].setText(un)
-            self.verticalLayout_4.addWidget(self.units[-1])
+            self.verticalLayout_units.addWidget(self.units[-1])
+
+            self.minmax.append(QtWidgets.QLabel(self.verticalLayoutWidget_units))
+            self.minmax[-1].setObjectName("minmax_"+i)
+            self.minmax[-1].setText(str(min)+ " : " + str(max))
+            self.verticalLayout_units.addWidget(self.minmax[-1])
 
         self.New = QtWidgets.QPushButton(self.centralwidget)
         self.New.setGeometry(QtCore.QRect(self.image_width + 140, 660, 75, 23))
@@ -114,7 +88,7 @@ class Ui_ValuesWindow(object):
         font.setPointSize(6)
         self.New.setFont(font)
         self.New.setObjectName("New")
-        self.New.clicked.connect(self.new_column)
+        self.New.clicked.connect(self.new_variant)
 
         self.Copy = QtWidgets.QPushButton(self.centralwidget)
         self.Copy.setGeometry(QtCore.QRect(self.image_width + 230, 660, 75, 23))
@@ -163,6 +137,25 @@ class Ui_ValuesWindow(object):
         self.statusbar.setObjectName("statusbar")
         MainWindow.setStatusBar(self.statusbar)
 
+        self.var_name = []
+
+        for position in range(3):
+            self.verticalLayoutWidget[position] = QtWidgets.QWidget(self.centralwidget)
+            self.verticalLayoutWidget[position].setGeometry(QtCore.QRect(self.image_width+ 120 * (position + 1), 0, 111, 631))
+            self.verticalLayoutWidget[position].setObjectName("verticalLayoutWidget_" + str(position))
+
+            self.verticalLayout[position] = QtWidgets.QVBoxLayout(self.verticalLayoutWidget[position])
+            self.verticalLayout[position].setContentsMargins(0, 0, 0, 0)
+            self.verticalLayout[position].setObjectName("verticalLayout_" + str(position))
+        
+            self.var_name.append(QtWidgets.QLabel(self.centralwidget))
+            self.var_name[position].setGeometry(QtCore.QRect(self.image_width + 120 * (position + 1), 0, 111, 20))
+
+            self.var_name[position].setObjectName("name_"+str(position))
+
+
+        self.inherit_variants(True)
+
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
@@ -175,42 +168,85 @@ class Ui_ValuesWindow(object):
         self.Copy.setText(_translate("MainWindow", "Copy"))
         self.Redo.setText(_translate("MainWindow", "Redo"))
 
+    def inherit_variants(self, show_var = False):
+        self.variants = self.MainWindow_obj.variants
+        if show_var:
+            self.nb_column = len(self.variants)
+            for i in range(self.nb_column):
+                self.show_variant(list(self.variants.keys())[i], i)
+            
+        return
+
     def previous(self):
+        i = 0
+        for varient_name, _ in self.variants.items():
+            j = 0
+            for name, _ in self.minmax_dictionnary.items():
+                self.variants[varient_name][name] = self.doubleSpinBox[i][j].value()
+                j += 1
+            i += 1
 
-        for varient_name, value in self.output_dict_formatted.items():
-            for i, crit in enumerate (self.minmax_dictionnary.items()):
-                self.output_dict_formatted[varient_name][crit[0]]
-
-        self.MainWindow_obj.variants = self.output_dict_formatted
+        self.MainWindow_obj.variants = self.variants
         self.MainWindow.close()
         
+    def get_vertical_layout(self, position):
+        return self.verticalLayoutWidget[position], self.verticalLayout[position]
 
-    def new_column(self):
+    def show_variant(self, variant_name = None, index = None):
+        if index == None:
+            index = self.nb_column
+        widget, layout  = self.get_vertical_layout(index)
 
-        if(self.nb_column == 2):
-    
-            for i, (min, max, un) in self.minmax_dictionnary.items():
-                self.doubleSpinBox2.append(QtWidgets.QDoubleSpinBox(self.verticalLayoutWidget_2))
-                self.doubleSpinBox2[-1].setMinimum(float(min))
-                self.doubleSpinBox2[-1].setMaximum(float(max))
-                self.doubleSpinBox2[-1].setObjectName("doubleSpinBox2_"+i)
-                self.verticalLayout_2.addWidget(self.doubleSpinBox2[-1])
-            self.nb_column = self.nb_column + 1
+        while len(self.doubleSpinBox) <= index:
+            self.doubleSpinBox.append([])
+
+        self.doubleSpinBox[index] = []
+
+
+        if variant_name == None:
+            variant_name = "Unspecified" + str(index)
+            self.var_name[index].setText(variant_name)
+            self.variants[variant_name] = {}
+        else:
+            self.var_name[index].setText(variant_name)
+
+
+        variant = self.variants[variant_name]
+
+        for name, (min, max, un) in self.minmax_dictionnary.items():
+            self.doubleSpinBox[index].append(QtWidgets.QDoubleSpinBox(widget))
+            self.doubleSpinBox[index][-1].setMinimum(float(min))
+            self.doubleSpinBox[index][-1].setMaximum(float(max))
+
+            if name in variant:
+                self.doubleSpinBox[index][-1].setValue(variant[name])
+            else:
+                self.doubleSpinBox[index][-1].setValue(min)
+                variant[name] = min
+
+            self.doubleSpinBox[index][-1].setObjectName("doubleSpinBox2_"+name)
+            layout.addWidget(self.doubleSpinBox[index][-1])
+
+    def new_variant(self):
+
+        if self.nb_column >=3:
+            QMessageBox.about(self, "Error", "Cannot add more than 3 variants.")
             return
         
-        if(self.nb_column == 3): 
-
-            for i, (min, max, un) in self.minmax_dictionnary.items():
-                self.doubleSpinBox3.append(QtWidgets.QDoubleSpinBox(self.verticalLayoutWidget_3))
-                self.doubleSpinBox3[-1].setMinimum(float(min))
-                self.doubleSpinBox3[-1].setMaximum(float(max))
-                self.doubleSpinBox3[-1].setObjectName("doubleSpinBox3_"+i)
-                self.verticalLayout_3.addWidget(self.doubleSpinBox3[-1])
-            self.nb_column = self.nb_column + 1
-            return 
+        Dialog = QtWidgets.QDialog()
+        ui = Ui_Dialog()
+        ui.setupUi(Dialog, True, "Unspecified" + str(self.nb_column))
+        Dialog.show()
+        rsp = Dialog.exec_()
+        if rsp == QtWidgets.QDialog.Accepted:
+            variant_name = ui.branch_name.text()
+            self.variants[variant_name] = {}
+            self.show_variant(variant_name)
+            self.nb_column += 1
 
     def copy(self):
-        
+        QMessageBox.about(self, "Error", "Not available right now.")
+        return 
         if(self.nb_column == 2):
     
             for i, (crit, (min, max, un)) in enumerate(self.minmax_dictionnary.items()):
@@ -238,7 +274,8 @@ class Ui_ValuesWindow(object):
             return 
 
     def reset(self):
-
+        QMessageBox.about(self, "Error", "Not available right now.")
+        return 
         if(self.nb_column == 3 or self.nb_column == 4):
             for i, crit in enumerate(self.minmax_dictionnary.items()):
                 self.doubleSpinBox2[i].deleteLater() 
@@ -264,13 +301,14 @@ class Ui_ValuesWindow(object):
         #value1 = []
         #value2 = []
         #value3 = []
+        self.nb_column += 1
 
         for i, crit in enumerate (self.minmax_dictionnary.items()):
-            self.output_dict[crit[0]] = [self.doubleSpinBox[i].value()]
+            self.output_dict[crit[0]] = [self.doubleSpinBox[0][i].value()]
             if(self.nb_column == 3 or self.nb_column == 4):
-                self.output_dict[crit[0]] = (self.doubleSpinBox[i].value(), self.doubleSpinBox2[i].value())
+                self.output_dict[crit[0]] = (self.doubleSpinBox[0][i].value(), self.doubleSpinBox[1][i].value())
             if(self.nb_column == 4):
-                self.output_dict[crit[0]] = (self.doubleSpinBox[i].value(), self.doubleSpinBox2[i].value(), self.doubleSpinBox3[i].value())
+                self.output_dict[crit[0]] = (self.doubleSpinBox[0][i].value(), self.doubleSpinBox[1][i].value(), self.doubleSpinBox[2][i].value())
         # Here we should get the dictionnary from Coline's work: matching each indicator with its value input
             
         values_dict = self.output_dict
@@ -390,10 +428,12 @@ class Ui_ValuesWindow(object):
             final_value = final_score.tolist()
         complete_dictionnary = self.complete_dictionnary
         t = self.t
+    
+        self.nb_column +=  -1
 
         self.window=QtWidgets.QMainWindow()
         self.ui=Ui_Dialog_for_graph()      #------------->creating an object
-        self.ui.setupUi_for_graph(self.window,pilar_dictionnary,criteria_dictionnary,indicator_dictionnary,final_value,t,complete_dictionnary)
+        self.ui.setupUi_for_graph(self.variants, self.window, pilar_dictionnary,criteria_dictionnary,indicator_dictionnary,final_value,t,complete_dictionnary)
         self.window.show()
 
 

@@ -15,7 +15,8 @@ import numpy as np
 import matplotlib.patches as mpatches
 
 class Ui_Dialog_for_graph(object):
-    def setupUi_for_graph(self, Dialog,pilar_dictionnary,criteria_dictionnary,indicator_dictionnary,final_value,t,complete_dictionnary):
+    def setupUi_for_graph(self, variants, Dialog,pilar_dictionnary,criteria_dictionnary,indicator_dictionnary,final_value,t,complete_dictionnary):
+        self.variants = variants
         self.final_value = final_value
         self.t = t
         self.complete_dictionnary = complete_dictionnary
@@ -163,7 +164,7 @@ class Ui_Dialog_for_graph(object):
                                                 final_crit_dictionnary[pilar][crit] = final_crit_value
 
                                             col = criteria_color_dictionnary[crit]
-                                            plt.bar(str("Variante "+str(var+1)),final_crit_value,0.1, color = col, bottom=previous_crit_value)
+                                            plt.bar(str(list(self.variants.keys())[var]),final_crit_value,0.1, color = col, bottom=previous_crit_value)
 
                                             previous_crit_value = previous_crit_value+final_crit_value
 
@@ -208,7 +209,7 @@ class Ui_Dialog_for_graph(object):
 
                                     if pilar not in final_pilar_dictionnary and final_pilar_value!=0:
                                         final_pilar_dictionnary[pilar] = final_pilar_value
-                                    plt.bar(str("Variante "+str(var+1)),final_pilar_value,0.1, color = col, bottom=previous_pilar_value)
+                                    plt.bar(str(list(self.variants.keys())[var]),final_pilar_value,0.1, color = col, bottom=previous_pilar_value)
                                     previous_pilar_value = previous_pilar_value+final_pilar_value
 
                         plt.ylabel("Scores")

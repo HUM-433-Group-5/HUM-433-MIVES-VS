@@ -25,6 +25,8 @@ class Ui_MainWindow(QMainWindow):
         # For variants
         self.variants = {}
         
+        self.variants["Default"] = {}
+
         # For the indicator function
         self.indicator_dictionnary = {}
 
@@ -136,8 +138,8 @@ class Ui_MainWindow(QMainWindow):
 
         value_window_button = QtWidgets.QPushButton(self.centralwidget)
         value_window_button.setGeometry(QtCore.QRect(810, 500, 200, 30))
-        value_window_button.setObjectName("Next")
-        value_window_button.setText("Next")
+        value_window_button.setObjectName("Variants")
+        value_window_button.setText("Variants")
         value_window_button.clicked.connect(self.create_dictionnary)
         value_window_button.clicked.connect(self.open_values_window)
 
