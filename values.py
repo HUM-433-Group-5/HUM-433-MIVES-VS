@@ -14,7 +14,7 @@ from Indicator_function import *
 from Graphic_output import *
 from Table_output import Table
 #from PyQt5.QtGui import *
-from PyQt5.QtWidgets import QMainWindow, QMessageBox
+from PyQt5.QtWidgets import QMainWindow, QMessageBox, QInputDialog
 #import sys
 from dialog import Ui_Dialog
 
@@ -88,7 +88,7 @@ class Ui_ValuesWindow(QMainWindow):
         font.setPointSize(6)
         self.New.setFont(font)
         self.New.setObjectName("New")
-        self.New.clicked.connect(self.new_variant)
+        self.New.clicked.connect(self.new)
 
         self.Copy = QtWidgets.QPushButton(self.centralwidget)
         self.Copy.setGeometry(QtCore.QRect(self.image_width + 230, 660, 75, 23))
@@ -103,7 +103,7 @@ class Ui_ValuesWindow(QMainWindow):
         font = QtGui.QFont()
         font.setPointSize(6)
         self.Redo.setFont(font)
-        self.Redo.setObjectName("Reset")
+        self.Redo.setObjectName("Remove")
         self.Redo.clicked.connect(self.reset)
 
         self.Next = QtWidgets.QPushButton(self.centralwidget)
@@ -166,7 +166,7 @@ class Ui_ValuesWindow(QMainWindow):
         self.Previous.setText(_translate("MainWindow", "Previous"))
         self.New.setText(_translate("MainWindow", "New"))
         self.Copy.setText(_translate("MainWindow", "Copy"))
-        self.Redo.setText(_translate("MainWindow", "Redo"))
+        self.Redo.setText(_translate("MainWindow", "Remove"))
 
     def inherit_variants(self, show_var = False):
         self.variants = self.MainWindow_obj.variants
@@ -177,7 +177,7 @@ class Ui_ValuesWindow(QMainWindow):
             
         return
 
-    def previous(self):
+    def update_variants(self):
         i = 0
         for varient_name, _ in self.variants.items():
             j = 0
@@ -185,6 +185,9 @@ class Ui_ValuesWindow(QMainWindow):
                 self.variants[varient_name][name] = self.doubleSpinBox[i][j].value()
                 j += 1
             i += 1
+
+    def previous(self):
+        self.update_variants()
 
         self.MainWindow_obj.variants = self.variants
         self.MainWindow.close()
@@ -227,8 +230,30 @@ class Ui_ValuesWindow(QMainWindow):
             self.doubleSpinBox[index][-1].setObjectName("doubleSpinBox2_"+name)
             layout.addWidget(self.doubleSpinBox[index][-1])
 
-    def new_variant(self):
+    def new(self):
+        if self.nb_column >=3:
+            QMessageBox.about(self, "Error", "Cannot add more than 3 variants.")
+            return
 
+        if len(self.variants) > 0:
+            msg_box = QMessageBox()
+            msg_box.setText("Do you want to copy from another variant?")
+            msg_box.setStandardButtons(QMessageBox.Yes | QMessageBox.No | QMessageBox.Cancel)
+
+            # Show the message box and get the response from the user
+            response = msg_box.exec_()
+
+            # Check the response and perform an action based on the button clicked
+            if response == QMessageBox.Yes:
+                self.copy()
+            elif response == QMessageBox.No:
+                self.new_variant()
+            elif response == QMessageBox.Cancel:
+                return
+        else:   
+            self.new_variant()
+
+    def new_variant(self):
         if self.nb_column >=3:
             QMessageBox.about(self, "Error", "Cannot add more than 3 variants.")
             return
@@ -245,54 +270,61 @@ class Ui_ValuesWindow(QMainWindow):
             self.nb_column += 1
 
     def copy(self):
-        QMessageBox.about(self, "Error", "Not available right now.")
-        return 
-        if(self.nb_column == 2):
-    
-            for i, (crit, (min, max, un)) in enumerate(self.minmax_dictionnary.items()):
-                self.doubleSpinBox2.append(QtWidgets.QDoubleSpinBox(self.verticalLayoutWidget_2))
-                self.doubleSpinBox2[-1].setMinimum(float(min))
-                self.doubleSpinBox2[-1].setMaximum(float(max))
-                self.doubleSpinBox2[-1].setObjectName("doubleSpinBox2_"+crit)
-                self.verticalLayout_2.addWidget(self.doubleSpinBox2[-1])
-                self.doubleSpinBox2[-1].setValue(self.doubleSpinBox[i].value())
-
-            self.nb_column = self.nb_column + 1
+        if self.nb_column >=3:
+            QMessageBox.about(self, "Error", "Cannot add more than 3 variants.")
             return
         
-        if(self.nb_column == 3): 
+        last_name = "Default"
+        last_value = {}
+        list_names = []
+        for name, value in self.variants.items():
+            last_name = name
+            last_value = value
+            list_names.append(name)
 
-            for i, (crit, (min, max, un)) in enumerate(self.minmax_dictionnary.items()):
-                self.doubleSpinBox3.append(QtWidgets.QDoubleSpinBox(self.verticalLayoutWidget_3))
-                self.doubleSpinBox3[-1].setMinimum(float(min))
-                self.doubleSpinBox3[-1].setMaximum(float(max))
-                self.doubleSpinBox3[-1].setObjectName("doubleSpinBox3_"+crit)
-                self.verticalLayout_3.addWidget(self.doubleSpinBox3[-1])
-                self.doubleSpinBox3[-1].setValue(self.doubleSpinBox2[i].value())
+        Dialog = QtWidgets.QDialog()
+        ui = Ui_Dialog()
+        ui.setupUi(Dialog, True, last_name + "_new")
+        Dialog.show()
+        rsp = Dialog.exec_()
+        if rsp == QtWidgets.QDialog.Accepted:
+            
+            item, ok = QInputDialog.getItem(self,"Copy variant","Which variant you want to copy from?",list_names,0,False)
 
-            self.nb_column = self.nb_column + 1
-            return 
+            if ok:
+                self.update_variants()
+                variant_name = ui.branch_name.text()
+                self.variants[variant_name] = self.variants[item]
+                self.show_variant(variant_name)
+                self.nb_column += 1
+        
 
     def reset(self):
-        QMessageBox.about(self, "Error", "Not available right now.")
-        return 
-        if(self.nb_column == 3 or self.nb_column == 4):
-            for i, crit in enumerate(self.minmax_dictionnary.items()):
-                self.doubleSpinBox2[i].deleteLater() 
-                
-            self.doubleSpinBox2 = []
-        
-        if(self.nb_column == 4):
-            for i, crit in enumerate(self.minmax_dictionnary.items()): 
-                self.doubleSpinBox3[i].deleteLater() 
-                
-            self.doubleSpinBox3 = []
+        list_names = []
+        for name, _ in self.variants.items():
+            list_names.append(name)
 
-        for i, (crit, (min, max, un)) in enumerate(self.minmax_dictionnary.items()): 
-                self.doubleSpinBox[i].setValue(float(min))
+        item, ok = QInputDialog.getItem(self,"Remove variant","Which variant you want to remove?",list_names,0,False)
 
-        self.nb_column = 2
-        return
+        if ok:
+            for j in range(len(self.variants)):
+                for i, crit in enumerate(self.minmax_dictionnary.items()):
+                    self.doubleSpinBox[j][i].deleteLater()
+                    self.var_name[j].setText("")
+                
+            self.doubleSpinBox = [[]*3]
+
+            new_variants = {}
+
+            for name, value in self.variants.items():
+                if name != item:
+                    new_variants[name] = value
+
+            self.variants = new_variants
+
+            self.nb_column = len(self.variants)
+            for i in range(self.nb_column):
+                self.show_variant(list(self.variants.keys())[i], i)
 
     def next_page(self):
 
