@@ -9,19 +9,63 @@
 
 
 from PyQt5 import QtCore, QtGui, QtWidgets
-from PyQt5.QtCore import *
-from PyQt5.QtGui import *
-from PyQt5.QtWidgets import *
-from ete3 import Tree, faces, AttrFace, TreeStyle, NodeStyle, TextFace
+from PyQt5.QtCore import Qt
+from PyQt5.QtGui import QPalette, QColor
+from PyQt5.QtWidgets import QWidget, QMainWindow, QComboBox, QInputDialog, QMessageBox, QDialog, QLabel, QVBoxLayout, QLineEdit, QPushButton, QFormLayout
+from ete3 import Tree, TreeStyle, NodeStyle, TextFace
 from dialog import Ui_Dialog
 from Indicator_updated import *
 from values import Ui_ValuesWindow 
-import copy
-import math
+from copy import copy
+from math import isclose
 
 
 class Ui_MainWindow(QMainWindow):
     def setupUi(self, MainWindow):
+        # Set bold red branch to the root node
+        self.style_pillar = NodeStyle()
+        self.style_pillar["fgcolor"] = "#0f0f0f"
+        self.style_pillar["size"] = 0
+        self.style_pillar["vt_line_color"] = "#0fff0f"
+        self.style_pillar["hz_line_color"] = "#ffff0f"
+        self.style_pillar["vt_line_width"] = 6
+        self.style_pillar["hz_line_width"] = 6
+        self.style_pillar["vt_line_type"] = 0 # 0 solid, 1 dashed, 2 dotted
+        self.style_pillar["hz_line_type"] = 1
+
+        #Set less thicker red branch
+        self.style_criterion = NodeStyle()
+        self.style_criterion["fgcolor"] = "#0f0f0f"
+        self.style_criterion["size"] = 0
+        self.style_criterion["vt_line_color"] = "#0fffff"
+        self.style_criterion["hz_line_color"] = "#0fff0f"
+        self.style_criterion["vt_line_width"] = 4
+        self.style_criterion["hz_line_width"] = 4
+        self.style_criterion["vt_line_type"] = 0 # 0 solid, 1 dashed, 2 dotted
+        self.style_criterion["hz_line_type"] = 0
+
+        # Set dashed blue lines in all leaves
+        self.style_indicator = NodeStyle()
+        self.style_indicator["fgcolor"] = "#0f0f0f"
+        self.style_indicator["size"] = 0
+        self.style_indicator["vt_line_color"] = "#ff0000"
+        self.style_indicator["hz_line_color"] = "#0fffff"
+        self.style_indicator["vt_line_width"] = 0
+        self.style_indicator["hz_line_width"] = 0
+        self.style_indicator["vt_line_type"] = 0 # 0 solid, 1 dashed, 2 dotted
+        self.style_indicator["hz_line_type"] = 0
+
+        # Set dashed blue lines in all leaves
+        self.style_root = NodeStyle()
+        self.style_root["fgcolor"] = "#0f0f0f"
+        self.style_root["size"] = 0
+        self.style_root["vt_line_color"] = "#ffff0f"
+        self.style_root["hz_line_color"] = "#ff0000"
+        self.style_root["vt_line_width"] = 8
+        self.style_root["hz_line_width"] = 8
+        self.style_root["vt_line_type"] = 0 # 0 solid, 1 dashed, 2 dotted
+        self.style_root["hz_line_type"] = 0
+
         # For variants
         self.variants = {}
         
@@ -154,6 +198,8 @@ class Ui_MainWindow(QMainWindow):
         MainWindow.setStatusBar(self.statusbar)
 
 
+        
+
         self.numClicked = 0
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
@@ -211,7 +257,6 @@ class Ui_MainWindow(QMainWindow):
             else:
                 pass
 
-    
     def check_user_input(self,nameinput, weightinput):
         try:
             # Convert it into integer
@@ -486,7 +531,6 @@ class Ui_MainWindow(QMainWindow):
                             pass
             else:
                 pass
-    
 
     def clear_popup(self):
             for node in self.t.traverse("postorder"):
@@ -501,7 +545,7 @@ class Ui_MainWindow(QMainWindow):
         
         
     def create_dictionnary(self):
-        self.complete_dictionnary = copy.copy(self.indicator_dictionnary)
+        self.complete_dictionnary = copy(self.indicator_dictionnary)
         for node in self.t.traverse("postorder"):
             if  node.is_leaf()== False and node.up != None:
                 self.complete_dictionnary[node.name] = self.weights[node.name]
@@ -538,7 +582,7 @@ class Ui_MainWindow(QMainWindow):
             summation = 0.0
             for child in tree.get_children():
                 summation = summation + float(self.weights[child.name])
-            if math.isclose(summation, 1):
+            if isclose(summation, 1):
                 check_children = True
                 for child in tree.get_children():
                     check_children = check_children and self.check_weights(child)
@@ -552,6 +596,7 @@ class Ui_MainWindow(QMainWindow):
 
 
     def update_tree_display(self):
+        self.color_tree()
         self.t.render("node_style.png", w = 800, tree_style=self.ts)
         label = self.label
         pixmap = QtGui.QPixmap("node_style.png")
@@ -602,6 +647,17 @@ class Ui_MainWindow(QMainWindow):
         
         print(self.selected_items)
 # End for Database 
+    def color_tree(self):
+        for node in self.t.traverse("postorder"):
+            if node.up == None:
+                node.set_style(self.style_root)
+            elif node.up.up == None:
+                node.set_style(self.style_pillar)
+            elif node.up.up.up == None:
+                node.set_style(self.style_criterion)
+            elif node.up.up.up.up == None:
+                node.set_style(self.style_indicator)
+
     def get_example_tree(self):
         self.weights[''] = 0
         self.weights["Economic"] = 0.36
@@ -633,49 +689,6 @@ class Ui_MainWindow(QMainWindow):
         # can now create fixed node styles and use them many times, save them
         # or even add them to nodes before drawing (this allows to save and
         # reproduce an tree image design)
-
-        # Set bold red branch to the root node
-        style = NodeStyle()
-        style["fgcolor"] = "#0f0f0f"
-        style["size"] = 0
-        style["vt_line_color"] = "#ff0000"
-        style["hz_line_color"] = "#ff0000"
-        style["vt_line_width"] = 6
-        style["hz_line_width"] = 6
-        style["vt_line_type"] = 0 # 0 solid, 1 dashed, 2 dotted
-        style["hz_line_type"] = 0
-
-        #Set less thicker red branch
-        style1 = NodeStyle()
-        style1["fgcolor"] = "#0f0f0f"
-        style1["size"] = 0
-        style1["vt_line_color"] = "#ff0000"
-        style1["hz_line_color"] = "#ff0000"
-        style1["vt_line_width"] = 4
-        style1["hz_line_width"] = 4
-        style1["vt_line_type"] = 0 # 0 solid, 1 dashed, 2 dotted
-        style1["hz_line_type"] = 0
-
-        # Set dashed blue lines in all leaves
-        style2 = NodeStyle()
-        style2["fgcolor"] = "#0f0f0f"
-        style2["size"] = 0
-        style2["vt_line_color"] = "#ff0000"
-        style2["hz_line_color"] = "#ff0000"
-        style2["vt_line_width"] = 2
-        style2["hz_line_width"] = 2
-        style2["vt_line_type"] = 0 # 0 solid, 1 dashed, 2 dotted
-        style2["hz_line_type"] = 0
-
-        t.set_style(style2)
-        for node in t.traverse("postorder"):
-            node.img_style = style1
-        t.children[0].img_style = style
-        t.children[1].img_style = style
-        t.children[2].img_style = style
-
-        for l in t.iter_leaves():
-            l.img_style = style2
         
         # We input a geometry for the predefined indicators
         for node in t.traverse("postorder"):
@@ -721,7 +734,7 @@ class Ui_MainWindow(QMainWindow):
         ts = TreeStyle()
         ts.show_leaf_name = False
         ts.force_topology = True
-        return t, ts, style, style1, style2
+        return t, ts, self.style_criterion, self.style_pillar, self.style_indicator
 
 class inputdialogdemo(QWidget):
    def __init__(self, parent = None):

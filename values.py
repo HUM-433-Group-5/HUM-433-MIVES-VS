@@ -13,9 +13,9 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 from Indicator_function import *
 from Graphic_output import *
 from Table_output import Table
-from PyQt5.QtGui import *
-from PyQt5.QtWidgets import *
-import sys
+#from PyQt5.QtGui import *
+from PyQt5.QtWidgets import QMainWindow, QMessageBox
+#import sys
 from dialog import Ui_Dialog
 
 class Ui_ValuesWindow(QMainWindow):
