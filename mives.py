@@ -511,6 +511,7 @@ class Ui_MainWindow(QMainWindow):
                                                 self.weight_faces[node.name] = weight_face
                                                 
                                                 new_node = Tree()
+                                                new_node.name = name
                                                 new_node.add_face(name_face, column=0, position="branch-top")
                                                 new_node.add_face(weight_face, column=0, position="branch-bottom")
                                                 new_node.img_style = self.style2
