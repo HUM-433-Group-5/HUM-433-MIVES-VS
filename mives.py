@@ -186,7 +186,7 @@ class Ui_MainWindow(QMainWindow):
             self.buttony = self.buttony + 30
             combobox.addItems(self.material_list)
             self.comboboxes.append(combobox)
-            combobox.currentIndexChanged.connect(lambda index, i=i: self.update_selected_items(index, i))
+            combobox.activated.connect(lambda index, i=i: self.update_selected_items(index, i))
         
         self.database = None
 
