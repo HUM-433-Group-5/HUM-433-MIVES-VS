@@ -19,6 +19,8 @@ from values import Ui_ValuesWindow
 from copy import copy
 from math import isclose
 
+from database import DatabaseParser
+from database_table import DatabaseDialog
 
 class Ui_MainWindow(QMainWindow):
     def setupUi(self, MainWindow):
@@ -31,7 +33,7 @@ class Ui_MainWindow(QMainWindow):
         self.style_pillar["vt_line_width"] = 6
         self.style_pillar["hz_line_width"] = 6
         self.style_pillar["vt_line_type"] = 0 # 0 solid, 1 dashed, 2 dotted
-        self.style_pillar["hz_line_type"] = 1
+        self.style_pillar["hz_line_type"] = 0
 
         #Set less thicker red branch
         self.style_criterion = NodeStyle()
@@ -145,6 +147,7 @@ class Ui_MainWindow(QMainWindow):
         crit_button.setText("Add criterion")
         crit_button.clicked.connect(self.weight_selection_popup_crit)
 
+        self.database_popup = [0] * 5
 
         ind_button = QtWidgets.QPushButton(self.centralwidget)
         ind_button.setGeometry(QtCore.QRect(810, self.buttony, 200, 30))
@@ -166,9 +169,10 @@ class Ui_MainWindow(QMainWindow):
         self.database_cb.setText("Use Database")
         self.database_cb.clicked.connect(self.set_use_database)
 
-        num_of_materials = 3
+        num_of_materials = 5
         self.comboboxes = []
         self.selected_items = [self.material_list[0]] * num_of_materials
+
         for i in range(num_of_materials):
             combobox = QComboBox(self.centralwidget)
             combobox.setEnabled(False)
@@ -178,6 +182,10 @@ class Ui_MainWindow(QMainWindow):
             self.comboboxes.append(combobox)
             combobox.currentIndexChanged.connect(lambda index, i=i: self.update_selected_items(index, i))
         
+        self.database = None
+
+        self.freeze_database_table = True
+
 # End for Database
 
         value_window_button = QtWidgets.QPushButton(self.centralwidget)
@@ -619,12 +627,39 @@ class Ui_MainWindow(QMainWindow):
 # Start for Database
     def set_use_database(self):
         if self.database_cb.isChecked():
+            path = r'database\database.csv'
+            self.database = DatabaseParser(path)
+            while True:
+                try:
+                    self.database.load(path)
+                    print('Database activated')
+                    break
+                except Exception as e:
+                    print(e)
+                    message_box = QMessageBox()
+                    message_box.setText("Cannot read database file. Do you want to enter a new path?")
+                    message_box.setStandardButtons(QMessageBox.Yes | QMessageBox.No)
+
+                    # Show the message box and wait for user response
+                    response = message_box.exec_()
+
+                    # Process the user response
+                    if response == QMessageBox.Yes:
+                        item, ok = QInputDialog.getItem(self,"New database","Insert the path to the database",[],0,False)
+                        if ok:
+                            path = item
+                            continue
+                        else:
+                            self.database_cb.setChecked(False)
+                            return
+                    elif response == QMessageBox.No:
+                        self.database_cb.setChecked(False)
+                        return
+
             self.activate_database = True
-            self.call_msgbox('Database', 'Database is activated',300,100)
-            self.enable_comboboxes(True)
+            self.enable_comboboxes(True, self.database.get_categories_list())
         else:
             self.activate_database = False
-            self.call_msgbox('Database', 'Database is deactivated',300,100)
             self.enable_comboboxes(False)
         
             
@@ -638,15 +673,41 @@ class Ui_MainWindow(QMainWindow):
             dialog.setFixedSize(size_x, size_y)
         dialog.exec_()
         
-    def enable_comboboxes(self, enable):
+    def enable_comboboxes(self, enable, material_list = None):
+        self.freeze_database_table = True
+
         for combobox in self.comboboxes:
             combobox.setEnabled(enable)
+
+        if material_list == None:
+            return
+
+        for combobox in self.comboboxes:
+            combobox.clear()
+
+        self.material_list = material_list
+
+        for combobox in self.comboboxes:
+            combobox.addItems(self.material_list)
+
+        self.freeze_database_table = False
+        
+
     
     def update_selected_items(self, index, i):
         # Update the selected_items list for the i-th combobox
         self.selected_items[i] = self.material_list[index]
         
         print(self.selected_items)
+
+        if self.database != None and self.freeze_database_table == False:
+            cat = self.material_list[index]
+
+            values = self.database.get_materials_list(cat, True, True)
+
+            if values != None:
+                self.database_popup[i] = DatabaseDialog(values, "Database for " + cat)
+
 # End for Database 
     def color_tree(self):
         for node in self.t.traverse("postorder"):
