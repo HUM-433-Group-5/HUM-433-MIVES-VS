@@ -631,6 +631,7 @@ class Ui_MainWindow(QMainWindow):
             self.database = DatabaseParser(path)
             while True:
                 try:
+                    print(path)
                     self.database.load(path)
                     print('Database activated')
                     break
@@ -697,8 +698,6 @@ class Ui_MainWindow(QMainWindow):
     def update_selected_items(self, index, i):
         # Update the selected_items list for the i-th combobox
         self.selected_items[i] = self.material_list[index]
-        
-        print(self.selected_items)
 
         if self.database != None and self.freeze_database_table == False:
             cat = self.material_list[index]

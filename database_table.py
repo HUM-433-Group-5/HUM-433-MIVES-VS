@@ -23,6 +23,10 @@ class DatabaseDialog(QDialog):
         table_widget.setItemDelegateForRow(0, delegate)
         
         for row in range(len(self.matrix)):
+            if row != 0:
+                delegate = TablePaintDelegate(QColor(127,255,127),table_widget,0)
+                table_widget.setItemDelegateForRow(row, delegate)
+
             for col in range(len(self.matrix[0])):
                 item = QTableWidgetItem(str(self.matrix[row][col]))
                 table_widget.setItem(row, col, item)

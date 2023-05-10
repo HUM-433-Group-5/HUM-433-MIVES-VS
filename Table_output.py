@@ -15,17 +15,25 @@ from PyQt5.QtWidgets import QWidget, QVBoxLayout
 from PyQt5.QtGui import QColor
 
 class TablePaintDelegate(QStyledItemDelegate):
-    def __init__(self, color, parent=None):
+    def __init__(self, color, parent=None, column = None):
         super().__init__(parent)
         self.color = color
+        self.column = column
     
     def paint(self, painter, option, index):
         data = index.model().data(index, Qt.DisplayRole)
         if data != None:
-            painter.save()
-            painter.fillRect(option.rect, self.color)
-            painter.setPen(QColor(255, 255, 255))
-            painter.restore()
+            if self.column != None:
+                if index.column() == self.column:
+                    painter.save()
+                    painter.fillRect(option.rect, self.color)
+                    painter.setPen(QColor(255, 255, 255))
+                    painter.restore()
+            else:
+                painter.save()
+                painter.fillRect(option.rect, self.color)
+                painter.setPen(QColor(255, 255, 255))
+                painter.restore()
 
         super().paint(painter, option, index)
 
