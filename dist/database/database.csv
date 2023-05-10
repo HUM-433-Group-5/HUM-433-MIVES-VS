@@ -1,0 +1,180 @@
+﻿Materials;Embodied Energy and Carbon Coefficients;
+;EE - M J / k g ;E C − ( G H G ) k g C O 2 e / k g 
+;;
+Aggregate;;
+General (gravel or crushed rocks);0.083;0.0052
+;;
+Aluminium;;
+General;155;9.16
+Virgin;218;12.79
+Recycled;29;1.81
+Cast Products;159;9.22
+Virgin;226;13.1
+Recycled;25;1.45
+Extruded;154;9.08
+Virgin;214;12.5
+Recycled;34;2.12
+Rolled;155;9.18
+Virgin;217;12.8
+Recycled;28;1.79
+;;
+Bricks;;
+General (Common Brick);3.00;0.24
+;;
+Cement;;
+General (UK weighted average)  ;4.5;0.74
+Average CEM I Portland Cement, 94 % Clinker;5.5;0.95
+6 % Fly Ash (CEM II/A-V) ;5.28; 0.89
+20 % Fly Ash (CEM II/A-V) ;4.51;0.76
+35 % Fly Ash (CEM II/B-V) ;3.68;0.62
+21 % GGBS (CEM II/B-S) ;4.77;0.77
+35 % GGBS (CEM II/B-S) ;4.21;0.65
+65 % GGBS (CEM III/A) ;3;0.39
+80% GGBS (CEM II/B) ;2.4;0.26
+Mortar (1:3 Cement:Sand mix) ;1.33;0.221
+Mortar (1:4);1.11;0.182
+Mortar (1:5);0.97;0.156
+Mortar (1:6);0.85;0.136
+Mortar (1:Y:4y/2 Cement:Lime: Sand mix) ;1.34;0.213
+Mortar (1:1:6 Cement:Lime: Sand mix) ;1.11;0.174
+Mortar (1:2:9 Cement:Lime: Sand mix) ;1.03;0.155
+Cement stabilised soil @ 5 %;0.68;0.061
+Cement stabilised soil @ 8 %;0.83;0.084
+;;
+Clay;;
+General (Simple Baked Products);3.00;0.24
+Tile;6.5;0.48
+Vitrified clay pipe DN 100 and DN 150;6.2;0.46
+Vitrified clay pipe DN 200 and DN 300 ;7.00;0.50
+Vitrified clay pipe DN 500;7.9;0.55
+;;
+Concrete;;
+General;0.75;0.107
+General 16/20 Mpa;0.70;0.1
+General 20/25 Mpa;0.74;0.107
+General 25/30 Mpa;0.78;0.113
+General 28/35 Mpa;0.82;0.12
+General 32/40 Mpa;0.88;0.132
+General 40/50 Mpa;1;0.151
+GEN 0 (6/8 MPa) 0% Fly ash;0.55;0.076
+GEN 0 (6/8 MPa) 15% Fly ash;0.52;0.069
+GEN 0 (6/8 MPa) 30% Fly ash;0.47;0.061
+GEN 1 (8/10 MPa) 0% Fly ash;0.7;0.104
+GEN 1 (8/10 MPa) 15% Fly ash;0.65;0.094
+GEN 1 (8/10 MPa) 30% Fly ash;0.59;0.082
+GEN 2 (12/15 MPa) 0% Fly ash;0.76;0.114
+GEN 2 (12/15 MPa) 15% Fly ash;0.71;0.105
+GEN 2 (12/15 MPa) 30% Fly ash;0.64;0.093
+GEN 3 (16/20 MPa) 0% Fly ash;0.81;0.123
+GEN 3 (16/20 MPa) 15% Fly ash;0.75;0.112
+GEN 3 (16/20 MPa) 30% Fly ash;0.68;0.1
+RC 20/25 0% Fly ash;0.86;0.132
+RC 20/25 15% Fly ash;0.81;0.122
+RC 20/25 30% Fly ash;0.73;0.108
+RC 25/30 0% Fly ash;0.91;0.140
+RC 25/30 15% Fly ash;0.85;0.130
+RC 25/30 30% Fly ash;0.77;0.115
+RC 28/35 0% Fly ash;0.95;0.148
+RC 28/35 15% Fly ash;0.90;0.138
+RC 28/35 30% Fly ash;0.82;0.124
+RC 32/40 0% Fly ash;1.03;0.163
+RC 32/40 15% Fly ash;0.97;0.152
+RC 32/40 30% Fly ash;0.89;0.136
+RC 40/50 0% Fly ash;1.17;0.188
+RC 40/50 15% Fly ash;1.1;0.174
+RC 40/50 30% Fly ash;0.99;0.155
+PAV 1 0% Fly ash;0.95;0.148
+PAV 1 15% Fly ash;0.89;0.138
+PAV 1 30% Fly ash;0.81;0.123
+PAV 2 0% Fly ash;1.03;0.163
+PAV 2 15% Fly ash;0.97;0.152
+PAV 2 30% Fly ash;0.89;0.137
+GEN 0 (6/8 MPa) 0% Blast Furnace Slag;0.55;0.076
+GEN 0 (6/8 MPa) 25% Blast Furnace Slag;0.48;0.06
+GEN 0 (6/8 Mpa) 50% Blast Furnace Slag;0.41;0.045
+GEN 1 (8/10 MPa) 0% Blast Furnace Slag;0.7;0.104
+GEN 1 (8/10 MPa) 25% Blast Furnace Slag;0.6;0.08
+GEN 1 (8/10 MPa) 50% Blast Furnace Slag;0.5;0.058
+GEN 2 (12/15 MPa) 0% Blast Furnace Slag;0.76;0.114
+GEN 2 (12/15 MPa) 25% Blast Furnace Slag;0.62;0.088
+GEN 2 (12/15 MPa) 50% Blast Furnace Slag;0.55;0.065
+GEN 3 (16/20 MPa) 0%Blast Furnace Slag;0.81;0.123
+GEN 3 (16/20 MPa) 25% Blast Furnace Slag;0.69;0.096
+GEN 3 (16/20 MPa) 50% Blast Furnace Slag;0.57;0.07
+RC 20/25 0% Blast Furnace Slag;0.86;0.132
+RC 20/25 25% Blast Furnace Slag;0.74;0.104
+RC 20/25 50% Blast Furnace Slag;0.62;0.077
+RC 25/30 0% Blast Furnace Slag;0.91;0.14
+RC 25/30 25% Blast Furnace Slag;0.78;0.111
+RC 25/30 50% Blast Furnace Slag;0.65;0.081
+RC 28/35 0% Blast Furnace Slag;0.95;0.148
+RC 28/35 25% Blast Furnace Slag;0.83;0.119
+RC 28/35 50% Blast Furnace Slag;0.69;0.088
+RC 32/40 0% Blast Furnace Slag;1.03;0.163
+RC 32/40 25% Blast Furnace Slag;0.91;0.133
+RC 32/40 50% Blast Furnace Slag;0.78;0.1
+RC 40/50 0% Blast Furnace Slag;1.17;0.188
+RC 40/50 25% Blast Furnace Slag;1.03;0.153
+RC 40/50 50% Blast Furnace Slag;0.87;0.115
+PAV 1 0% Blast Furnace Slag;0.95;0.148
+PAV 1 25% Blast Furnace Slag;0.82;0.118
+PAV 1 50% Blast Furnace Slag;0.7;0.88
+PAV 2 0% Blast Furnace Slag;1.03;0.163
+PAV 2 25% Blast Furnace Slag;0.91;0.133
+PAV 2 50% Blast Furnace Slag;0.77;0.1
+;;
+Reinforced concrete;;
+Modification factors;1.04;0.077
+;;
+Precast;;
+Modification factors;0.45;0.029
+;;
+Concrete blocks;;
+Block - 8 Mpa;0.59;0.063
+Block - 10 Mpa;0.67;0.078
+Block - 12 Mpa;0.72;0.088
+Block - 13 Mpa;0.83;0.107
+Autoclaved Aereted Blocks;3.5;
+;;
+Nominal proportions method (Cement:Sand:Aggregate);;
+1:1:2;1.28;0.206
+1:1.5:3;0.99;0.155
+1:2:4;0.82;0.124
+1:2.5:5;0.71;0.104
+1:3:6;0.63;0.090
+1:4:8;0.54;0.074
+;;
+Soil;;
+General (Rammed Soil) ;0.45;0.024
+Cement stabilised soil @ 5%;0.68;0.061
+Cement stabilised soil @ 8%;0.83;0.084
+GGBS stabilised soil;0.65;0.047
+Fly ash stabilised soil;0.56;0.041
+;;
+Steel;;
+Bar and rod - UK (EU) Average Recycled Content - Virgin;29.20;2.77
+Bar and rod - UK (EU) Average Recycled Content - Recycled;8.80;0.45
+Plate- UK (EU) Average Recycled Content  -Virgin;45.4;3.27
+Section- UK (EU) Average Recycled Content - Virgin;38.00;3.03
+Section- UK (EU) Average Recycled Content - Recycled;10;0.47
+;;
+;;
+;;
+;;
+;;
+;;
+;;
+;;
+;;
+;;
+;;
+;;
+;;
+;;
+;;
+;;
+;;
+;;
+;;
+;;
+;;

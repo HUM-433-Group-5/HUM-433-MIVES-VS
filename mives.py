@@ -117,6 +117,12 @@ class Ui_MainWindow(QMainWindow):
         clear_button.setText("Clear tree")
         clear_button.clicked.connect(self.clear_popup)
 
+        reset_button = QtWidgets.QPushButton(self.centralwidget)
+        reset_button.setGeometry(QtCore.QRect(810, self.buttony, 200, 30))
+        self.buttony = self.buttony + 30
+        reset_button.setObjectName("Reset")
+        reset_button.setText("Reset tree")
+        reset_button.clicked.connect(self.reset_tree)
 
         rem_button = QtWidgets.QPushButton(self.centralwidget)
         rem_button.setGeometry(QtCore.QRect(810, self.buttony, 200, 30))
@@ -725,6 +731,14 @@ class Ui_MainWindow(QMainWindow):
                 node.set_style(self.style_criterion)
             elif node.up.up.up.up == None:
                 node.set_style(self.style_indicator)
+
+    def reset_tree(self):
+        self.weights = {}
+        self.name_faces = {}
+        self.weight_faces = {}
+        self.t,_,_,_,_ = self.get_example_tree()
+        self.t.render("node_style.png", w=self.image_width, tree_style=self.ts)
+        self.update_tree_display()
 
     def get_example_tree(self):
         self.weights[''] = 0
