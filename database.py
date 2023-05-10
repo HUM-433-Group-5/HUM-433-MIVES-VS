@@ -1,4 +1,4 @@
-import pandas as pd
+from pandas import read_csv
 
 class DatabaseParser:
     def __init__(self, file_path) -> None:
@@ -10,7 +10,7 @@ class DatabaseParser:
         if file_path != None:
             self.file_path = file_path
 
-        self.data_frame = pd.read_csv(self.file_path, delimiter=';', encoding='utf-8', header=0)
+        self.data_frame = read_csv(self.file_path, delimiter=';', encoding='utf-8', header=0)
         self.data_frame = self.data_frame.dropna(how='all')
 
         self.parse()

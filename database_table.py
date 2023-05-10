@@ -1,5 +1,4 @@
-import sys
-from PyQt5.QtWidgets import QApplication, QDialog, QTableWidget, QTableWidgetItem, QVBoxLayout
+from PyQt5.QtWidgets import QDialog, QTableWidget, QTableWidgetItem, QVBoxLayout
 from Table_output import TablePaintDelegate
 from PyQt5.QtGui import QColor
 
@@ -24,7 +23,7 @@ class DatabaseDialog(QDialog):
         
         for row in range(len(self.matrix)):
             if row != 0:
-                delegate = TablePaintDelegate(QColor(127,255,127),table_widget,0)
+                delegate = TablePaintDelegate(QColor(255,255,127),table_widget,0)
                 table_widget.setItemDelegateForRow(row, delegate)
 
             for col in range(len(self.matrix[0])):
