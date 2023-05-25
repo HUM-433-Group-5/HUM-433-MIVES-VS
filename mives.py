@@ -320,7 +320,7 @@ class Ui_MainWindow(QMainWindow):
                         self.find_peers_pil(ui.branch_name.text(),1-float(ui.weight.text()))
                     Dialog_2 = QtWidgets.QDialog()
                     indicator_updated_dialog = indicator_updated()
-                    indicator_updated_dialog.setupUi(Dialog_2)
+                    indicator_updated_dialog.setupUi(Dialog_2,self.indicator_dictionnary[ui.branch_name.text()])
                     Dialog_2.show()
                     rsp_2 = Dialog_2.exec_()
                     # Get the values from this indicator_updated_dialog function
@@ -499,7 +499,7 @@ class Ui_MainWindow(QMainWindow):
                                 
                                     Dialog_2 = QtWidgets.QDialog()
                                     indicator_updated_dialog = indicator_updated()
-                                    indicator_updated_dialog.setupUi(Dialog_2)
+                                    indicator_updated_dialog.setupUi(Dialog_2,self.indicator_dictionnary[ui.branch_name.text()])
                                     Dialog_2.show()
                                     rsp_2 = Dialog_2.exec_()
                                     # Get the values from this indicator_updated_dialog function

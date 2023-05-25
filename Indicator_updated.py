@@ -88,13 +88,14 @@ class indicator_updated(object):
         self.geometrical_P_input.setGeometry(QtCore.QRect(590, 440, 51, 16))
         self.geometrical_P_input.setText("1")
         self.geometrical_P_input.setObjectName("geometrical_C_input")
+
         if dict != None:
-            self.min_value_input.setText(dict['x_min'])
-            self.max_value_input.setText(dict['x_max'])
-            self.units_input.setText(dict['unit'])
-            self.geometrical_C_input.setText(dict['geometric_C'])
-            self.geometrical_K_input.setText(dict['geometric_K'])
-            self.geometrical_P_input.setText(dict['geometric_P'])
+            self.min_value_input.setText(str(dict['x_min']))
+            self.max_value_input.setText(str(dict['x_max']))
+            self.units_input.setText(str(dict['unit']))
+            self.geometrical_C_input.setText(str(dict['geometric_C']))
+            self.geometrical_K_input.setText(str(dict['geometric_K']))
+            self.geometrical_P_input.setText(str(dict['geometric_P']))
             self.binary_checkbox.setChecked(dict['binary'])
             self.descending_checkbox.setChecked(dict['descending'])
 
