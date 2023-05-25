@@ -354,8 +354,8 @@ class Ui_ValuesWindow(QMainWindow):
                     indicator_dict  = self.complete_dictionnary[node.name]
                     indicator_value = values_dict[node.name]
                     weight = float(indicator_dict["weight"])
-                    x_min = float(indicator_dict["x_min"])
-                    x_max = float(indicator_dict["x_max"])
+                    x_min = int(indicator_dict["x_min"])
+                    x_max = int(indicator_dict["x_max"])
                     geometric_P = float(indicator_dict["geometric_P"])
                     geometric_K = float(indicator_dict["geometric_K"])
                     geometric_C = float(indicator_dict["geometric_C"])
@@ -398,7 +398,7 @@ class Ui_ValuesWindow(QMainWindow):
                     for i in range (0,self.nb_column-1):
                         pillar_value = 0
                         for crit in node.get_children():
-                            pillar_value = pillar_value + computed_value_for_criteria_dict[crit.name][i]*self.complete_dictionnary[crit.name]
+                            pillar_value = pillar_value + computed_value_for_criteria_dict[crit.name][i]*float(self.complete_dictionnary[crit.name])
                         computed_value_for_pillars_dict[node.name].append(pillar_value)
                         final_score[i] = final_score[i] + pillar_value*self.complete_dictionnary[node.name]
 
@@ -410,8 +410,8 @@ class Ui_ValuesWindow(QMainWindow):
                     indicator_dict  = self.complete_dictionnary[node.name]
                     indicator_value = float(values_dict[node.name][0])
                     weight = float(indicator_dict["weight"])
-                    x_min = float(indicator_dict["x_min"])
-                    x_max = float(indicator_dict["x_max"])
+                    x_min = int(indicator_dict["x_min"])
+                    x_max = int(indicator_dict["x_max"])
                     geometric_P = float(indicator_dict["geometric_P"])
                     geometric_K = float(indicator_dict["geometric_K"])
                     geometric_C = float(indicator_dict["geometric_C"])
@@ -439,14 +439,14 @@ class Ui_ValuesWindow(QMainWindow):
                     for ind in node.get_children(): #Indicators are children of criterias
                         criteria_value = criteria_value + float(computed_value_for_indicator_dict[ind.name][0])*float(self.complete_dictionnary[ind.name]["weight"])
                     computed_value_for_criteria_dict[node.name] = [criteria_value]
-
+        
             computed_value_for_pillars_dict = {}
             final_score = 0
             for node in self.t.traverse("postorder"):
                 if  node.is_root() == False and node.up.is_root(): # Then it's a pillar
                     pillar_value = 0
                     for crit in node.get_children():
-                        pillar_value = pillar_value + computed_value_for_criteria_dict[crit.name][0]*self.complete_dictionnary[crit.name]
+                        pillar_value = pillar_value + computed_value_for_criteria_dict[crit.name][0]*float(self.complete_dictionnary[crit.name])
                     computed_value_for_pillars_dict[node.name] = [pillar_value]
                     final_score = final_score + pillar_value*self.complete_dictionnary[node.name]
 

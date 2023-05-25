@@ -578,7 +578,7 @@ class Ui_MainWindow(QMainWindow):
         self.complete_dictionnary = copy(self.indicator_dictionnary)
         for node in self.t.traverse("postorder"):
             if  node.is_leaf()== False and node.up != None:
-                self.complete_dictionnary[node.name] = self.weights[node.name]
+                self.complete_dictionnary[node.name] = float(self.weights[node.name])
 
 
     def open_values_window(self):

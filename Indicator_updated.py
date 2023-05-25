@@ -15,13 +15,12 @@ from Indicator_function import *
 
 
 class indicator_updated(object):
-    def setupUi(self, Dialog):
+    def setupUi(self, Dialog, dict = None):
         Dialog.setObjectName("Dialog")
         Dialog.resize(804, 498)
         self.descending_checkbox = QtWidgets.QCheckBox(Dialog)
         self.descending_checkbox.setGeometry(QtCore.QRect(20, 423, 120, 51))
         self.descending_checkbox.setObjectName("descending_checkbox")
-        descending = self.descending_checkbox.isChecked()
         self.buttonBox = QtWidgets.QDialogButtonBox(Dialog)
         self.buttonBox.setGeometry(QtCore.QRect(450, 460, 341, 32))
         self.buttonBox.setOrientation(QtCore.Qt.Horizontal)
@@ -50,8 +49,6 @@ class indicator_updated(object):
         scene.addPixmap(resized_image)
         grview.setScene(scene)
         grview.show()
-
-
         self.min_value_input = QtWidgets.QLineEdit(Dialog)
         self.min_value_input.setGeometry(QtCore.QRect(30, 100, 51, 16))
         self.min_value_input.setText("1")
@@ -91,10 +88,22 @@ class indicator_updated(object):
         self.geometrical_P_input.setGeometry(QtCore.QRect(590, 440, 51, 16))
         self.geometrical_P_input.setText("1")
         self.geometrical_P_input.setObjectName("geometrical_C_input")
+        if dict != None:
+            self.min_value_input.setText(dict['x_min'])
+            self.max_value_input.setText(dict['x_max'])
+            self.units_input.setText(dict['unit'])
+            self.geometrical_C_input.setText(dict['geometric_C'])
+            self.geometrical_K_input.setText(dict['geometric_K'])
+            self.geometrical_P_input.setText(dict['geometric_P'])
+            self.binary_checkbox.setChecked(dict['binary'])
+            self.descending_checkbox.setChecked(dict['descending'])
+
+        
         self.main_graph_label = QtWidgets.QLabel(Dialog)
         self.main_graph_label.setGeometry(QtCore.QRect(300, 0, 341, 16))
         self.main_graph_label.setObjectName("main_graph_label")
 
+        descending = self.descending_checkbox.isChecked()
          # Display the main initial graph
         x_min = float(self.min_value_input.text())
         x_max = float(self.max_value_input.text())
