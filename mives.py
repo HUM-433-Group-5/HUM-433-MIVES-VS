@@ -494,9 +494,9 @@ class Ui_MainWindow(QMainWindow):
 
                                 self.update_tree_display()
 
+                                #print(self.indicator_dictionnary)
                                 if item in self.indicator_dictionnary:
                                 
-                                    del self.indicator_dictionnary[item]
                                     Dialog_2 = QtWidgets.QDialog()
                                     indicator_updated_dialog = indicator_updated()
                                     indicator_updated_dialog.setupUi(Dialog_2)
@@ -508,6 +508,7 @@ class Ui_MainWindow(QMainWindow):
                                         # We need to store x_min, x_max, the geometrical parameters and the binary and descending boxes values
                                         # So that we can compute the function later. So we have to store one set of variables for each indicator.
                                         # Maybe in a dictionnary ?
+                                        del self.indicator_dictionnary[item]
                                         x_min = float(indicator_updated_dialog.min_value_input.text())
                                         x_max = float(indicator_updated_dialog.max_value_input.text())
                                         geometric_P = indicator_updated_dialog.geometrical_P_input.text()
